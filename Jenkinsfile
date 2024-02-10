@@ -1,5 +1,4 @@
 pipeline {
-    agent any
 
     environment {
         PROJECT_ID = "${PROJECT}"
@@ -8,6 +7,27 @@ pipeline {
         IMAGE_NAME = 'sftpgo'
         IMAGE_TAG = 'latest'
     }
+   agent {
+    kubernetes {
+       label "sftpgo-app"
+       yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: gcloud
+                image: google/cloud-sdk:latest
+                command:
+                - cat
+                tty: true
+              - name: kubectl
+                image: lachlanevenson/k8s-kubectl:v1.21.2
+                command:
+                - cat
+                tty: true
+       """  
+    }
+  }
 
     stages {
         stage('Build and push image with Container Builder') {
