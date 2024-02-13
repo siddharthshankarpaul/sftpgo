@@ -50,7 +50,6 @@ pipeline {
                 container('kubectl') {
                     withCredentials([file(credentialsId: 'gke_sa', variable: 'GC_KEY')]) {
                         sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
-                        sh 'gcloud config list'
                         sh "gcloud container clusters get-credentials ${CLUSTER} --zone ${CLUSTER_ZONE} --project ${PROJECT}"
                         sh "kubectl create deployment sftpgo-deployment --image=${REGISTRY_REGION}-docker.pkg.dev/${PROJECT}/${REGISTRY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
                         sh "kubectl set image deployment/sftpgo-deployment ${IMAGE_NAME}=${REGISTRY_REGION}-docker.pkg.dev/${PROJECT}/${REGISTRY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
